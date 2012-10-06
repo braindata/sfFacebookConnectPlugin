@@ -17,9 +17,12 @@ class sfFacebook
 
   public static function getFacebookCookie()
   {
-    $app_id = self::getApiKey();
+    $app_id = self::getApiId();
     $application_secret = self::getApiSecret();
     $args = array();
+    
+    //var_dump('COOKIE: fbs_' . $app_id);
+    
     if (!isset($_COOKIE['fbs_' . $app_id]))
     {
       return null;
@@ -57,7 +60,6 @@ class sfFacebook
       $params = array(
         'appId'  => self::getApiId(),
         'secret' => self::getApiSecret(),
-        'cookie' => self::getApiCookie(),
         'domain' => self::getApiDomain()
       );
 
@@ -73,28 +75,14 @@ class sfFacebook
   }
 
   /**
-   * get the facebook session
+   * get the facebook UID 
    *
-   * @return Array
-   * @author Benjamin Grandfond <benjaming@theodo.fr>
-   * @since 2010-05-13
-   */
-  public static function getSession()
-  {
-
-    return self::getFacebookClient()->getSession();
-  }
-
-  /**
-   * get the facebook user
-   *
-   * @return Array
+   * @return Integer
    * @author Benjamin Grandfond <benjaming@theodo.fr>
    * @since 2010-05-13
    */
   public static function getUser()
   {
-
     return self::getFacebookClient()->getUser();
   }
 
@@ -186,18 +174,29 @@ class sfFacebook
    */
   public static function getOrCreateUserByFacebookUid($facebook_uid, $isActive = true)
   {
-    $sfGuardUser = self::getGuardAdapter()->getSfGuardUserByFacebookUid($facebook_uid, $isActive);
-
-    if (!$sfGuardUser instanceof sfGuardUser)
+    $facebook_data = sfFacebook::getFacebookApi("me");
+    
+    //var_dump($facebook_data);
+    //var_dump(sprintf("UID: %s | active: %s", $facebook_uid, $isActive));
+    
+    if (is_array($facebook_data) && isset($facebook_data['id']))
     {
-      if (sfConfig::get('sf_logging_enabled'))
+    
+      $sfGuardUser = self::getGuardAdapter()->getSfGuardUserByFacebookUid($facebook_data, $isActive);
+
+      if (!$sfGuardUser instanceof sfGuardUser)
       {
-        sfContext::getInstance()->getLogger()->info('{sfFacebookConnect} No user exists with current email hash');
+        if (sfConfig::get('sf_logging_enabled'))
+        {
+          sfContext::getInstance()->getLogger()->info('{sfFacebookConnect} No user exists with current email');
+        }
+        $sfGuardUser = self::getGuardAdapter()->createSfGuardUserWithFacebookUid($facebook_data);
       }
-      $sfGuardUser = self::getGuardAdapter()->createSfGuardUserWithFacebookUid($facebook_uid);
+      
+      return $sfGuardUser;
     }
 
-    return $sfGuardUser;
+    return null;
   }
 
   /**
@@ -209,7 +208,7 @@ class sfFacebook
    */
   public static function getUserByFacebookUid($facebook_uid, $isActive = true)
   {
-    $sfGuardUser = self::getGuardAdapter()->retrieveSfGuardUserByFacebookUid($facebook_uid, $isActive);
+    $sfGuardUser = self::getGuardAdapter()->retrieveSfGuardUserByFacebookUid(array("id" => $facebook_uid), $isActive);
 
     if (!$sfGuardUser instanceof sfGuardUser)
     {
@@ -235,19 +234,14 @@ class sfFacebook
    */
   public static function getSfGuardUserByFacebookSession($create = true, $isActive = true)
   {
-    // We get the facebook uid from session
-    $fb_uid = self::getAnyFacebookUid();
+    // We get the facebook uid
+    $fb_uid = self::getUser();
+    
     if ($fb_uid)
     {
-
-      if ($create)
-      {
-
+      if ($create){
         return self::getOrCreateUserByFacebookUid($fb_uid, $isActive);
-      }
-      else
-      {
-
+      } else {
         return self::getUserByFacebookUid($fb_uid, $isActive);
       }
     }

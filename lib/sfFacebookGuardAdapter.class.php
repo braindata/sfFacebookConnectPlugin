@@ -213,6 +213,30 @@ abstract class sfFacebookGuardAdapter
     $sfGuardUser->setUsername('Facebook_'.$facebook_uid);
     $this->setUserFacebookUid($sfGuardUser, $facebook_uid);
     sfFacebookConnect::newSfGuardConnectionHook($sfGuardUser, $facebook_uid);
+    
+    try
+    {
+      $ret = sfFacebook::getFacebookApi("me");
+      //var_dump($ret);
+      
+      $sfGuardUser->setUsername($ret['name']);
+      
+      if ($ret['gender'] == "male")
+        $sfGuardUser->setGender("m");
+      else
+        $sfGuardUser->setGender("w");
+      
+      $sfGuardUser->setFirstName($ret['first_name']);
+      $sfGuardUser->setLastName($ret['last_name']);
+      
+      $sfGuardUser->setEmailAddress($ret['email']);
+      $sfGuardUser->setDateOfBirth(date("Y-m-d", strToTime($ret['birthday'])));
+    }
+    catch (Exception $e)
+    {
+      return null;
+    }
+
 
     // Save them into the database using a transaction to ensure a Facebook sfGuardUser cannot be stored without its facebook uid
     try

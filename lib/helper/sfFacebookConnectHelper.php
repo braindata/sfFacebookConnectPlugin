@@ -21,7 +21,7 @@ function include_bottom_facebook_connect_script($on_load_js = '')
   }
   ?>
   <div id="fb-root"></div>
-  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js"></script>
+  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js" type="text/javascript"></script>
   <script src="<?php echo javascript_path('/sfFacebookConnectPlugin/js/sfFacebookConnect') ?>" type="text/javascript"></script>
 
   <script type="text/javascript">
@@ -66,7 +66,7 @@ function include_facebook_connect_script()
 {
   ?>
   <div id="fb-root"></div>
-  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js"></script>
+  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js" type="text/javascript"></script>
   <script src="<?php echo javascript_path('/sfFacebookConnectPlugin/js/sfFacebookConnect') ?>" type="text/javascript"></script>
 
   <script type="text/javascript">
@@ -93,7 +93,7 @@ function include_facebook_connect_script_src()
   }
   ?>
   <div id="fb-root"></div>
-  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js"></script>
+  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js" type="text/javascript"></script>
   <script src="<?php echo javascript_path('/sfFacebookConnectPlugin/js/sfFacebookConnect') ?>" type="text/javascript"></script>
   <?php
   sfFacebook::setJsLoaded();
@@ -101,7 +101,7 @@ function include_facebook_connect_script_src()
 
 function init_sf_fb()
 {
-  return "sf_fb = new sfFacebookConnect('".sfConfig::get('app_facebook_api_key')."', '".url_for(sfConfig::get('app_facebook_connect_signin_url','sfFacebookConnectAuth/signin'))."');";
+  return "sf_fb = new sfFacebookConnect('".sfConfig::get('app_facebook_api_id')."', '".url_for(sfConfig::get('app_facebook_connect_signin_url','sfFacebookConnectAuth/signin'))."');";
 }
 
 

@@ -38,25 +38,29 @@ class BasesfFacebookConnectAuthActions extends sfActions
   {
     $user = $this->getUser();
     
+    //var_dump(sfFacebook::getUser());
+    
     // first check if user is already logged and not yet Facebook connected
-    if (
-      $user->isAuthenticated()
-      &&
-      !sfFacebook::getGuardAdapter()->getUserFacebookUid($user->getGuardUser())
-      &&
-      sfFacebook::getFacebookClient()->get_loggedin_user()
-      )
+    if ( $user->isAuthenticated() && sfFacebook::getUser())
     {
       $sfGuardUser = $user->getGuardUser();
-      sfFacebook::getGuardAdapter()->setUserFacebookUid($sfGuardUser, sfFacebook::getFacebookClient()->get_loggedin_user());
+      sfFacebook::getGuardAdapter()->setUserFacebookUid($sfGuardUser, sfFacebook::getUser());
       $sfGuardUser->save();
     }
     else
     {
       $create_automatically = !sfConfig::get('app_facebook_redirect_after_connect', false);
-      $sfGuardUser = sfFacebook::getSfGuardUserByFacebookSession($create_automatically);
+      
+//      try {
+        $sfGuardUser = sfFacebook::getSfGuardUserByFacebookSession($create_automatically);
+//      } catch (Exception $e){
+//        echo $e->message;
+//        //sfContext::getInstance()->getLogger()->error('{sfFacebookConnect} Error creating: '. $e->message);
+//      }
     }
     
+    //echo "User: ".$sfGuardUser."\n";
+
     if ($sfGuardUser)
     {
       $this->getContext()->getUser()->signIn($sfGuardUser);
@@ -69,9 +73,14 @@ class BasesfFacebookConnectAuthActions extends sfActions
       $forward = $this->getRequestParameter('forward');
 
       $signin_url = $forward != '' ? $forward : $signin_url;
+      
+      //var_dump($signin_url);
+      //die();
 
       $this->redirect('' != $signin_url ? $signin_url : '@homepage');
     }
+    
+    
     // check if user forgot to activate the account
     $sfGuardUser = sfFacebook::getSfGuardUserByFacebookSession($create_automatically, false);
     
@@ -99,6 +108,7 @@ class BasesfFacebookConnectAuthActions extends sfActions
       $this->getUser()->setFlash('error', 'Your account is not activated');
       $redirect_url = sfConfig::get('sf_login_module').'/'.sfConfig::get('sf_login_action');
     }
+    
   
     return $this->redirect($redirect_url);
 

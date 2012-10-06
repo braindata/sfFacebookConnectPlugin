@@ -58,21 +58,25 @@ class sfFacebookConnect
    */
   public static function getSfGuardUserByFacebookEmail($facebook_uid, $isActive = true)
   {
-    try
-    {
-      sfFacebook::getGuardAdapter()->getEmailHashColumn();
-    }
-    catch (Exception $e)
-    {
-      if (sfConfig::get('sf_logging_enabled'))
-      {
-        sfContext::getInstance()->getLogger()->info('{sfFacebookConnect} No email_hash column for this user');
-      }
-
-      return null;
-    }
-    $email_hashes = self::getFacebookUserEmailHashes($facebook_uid);
-    $sfGuardUser = sfFacebook::getGuardAdapter()->getSfGuardUserByEmailHashes($email_hashes, $isActive);
+//    try
+//    {
+//      sfFacebook::getGuardAdapter()->getEmailHashColumn();
+//    }
+//    catch (Exception $e)
+//    {
+//      if (sfConfig::get('sf_logging_enabled'))
+//      {
+//        sfContext::getInstance()->getLogger()->info('{sfFacebookConnect} No email_hash column for this user');
+//      }
+//
+//      return null;
+//    }
+//    $email_hashes = self::getFacebookUserEmailHashes($facebook_uid);
+//    $sfGuardUser = sfFacebook::getGuardAdapter()->getSfGuardUserByEmailHashes($email_hashes, $isActive);
+    
+    
+    
+    
     if ($sfGuardUser)
     {
       // Since we looked up by email_hash, save the fb_uid
@@ -165,54 +169,64 @@ class sfFacebookConnect
     {
       $email = sfFacebook::getGuardAdapter()->getUserEmail($sfGuardUser);
       $email_hash = self::getEmailHash($email);
+      
+      sfFacebook::getGuardAdapter()->setUserEmailHash($sfGuardUser, $email_hash);
+      $sfGuardUser->getProfile()->save();
+       
+      
       if ($email_hash != '')
       {
         array_push($accounts,
           array(
-            'account_id' => $sfGuardUser->getId(),
+            'account_url' => "http://www.tonight.de/user/".$sfGuardUser->getId(),
             'email_hash' => $email_hash
           )
         );
         $hashed_users[$email_hash] = $sfGuardUser;
       }
     }
-    if (count($accounts)==0)
-    {
-
-      return 0;
-    }
-    $facebook = sfFacebook::getFacebookClient();
-    $session_key = $facebook->api_client->session_key;
-    $facebook->api_client->session_key = null;
-
-    $result = false;
-    try
-    {
-      $ret = $facebook->api_client->call_method(
-               'facebook.connect.registerUsers',
-               array('accounts' => json_encode($accounts)));
-
-      // On success, return the set of email hashes registered
-      // An email hash will be registered even if the email does not match a Facebook account
-      $result = count($ret);
-      foreach($ret as $email_hash)
-      {
-        sfFacebook::getGuardAdapter()->setUserEmailHash($hashed_users[$email_hash],$email_hash);
-        if (method_exists($sfGuardUser, "getProfile")) {
-$hashed_users[$email_hash]->getProfile()->save();
-      } else {
-$hashed_users[$email_hash]->save();
-      }
-        
-      }
-    }
-    catch (Exception $e)
-    {
-      error_log("Exception thrown while calling facebook.connect.registerUsers: ".$e->getMessage());
-    }
-    $facebook->api_client->session_key = $session_key;
-
-    return $result;
+    
+    return count($accounts);
+    
+    // Not implemented by Facebook!!!
+    
+//    if (count($accounts)==0)
+//    {
+//
+//      return 0;
+//    }
+//    $facebook = sfFacebook::getFacebookClient();
+//    $session_key = $facebook->getSession();
+//    $facebook->setSession(null);
+//
+//    $result = false;
+//    try
+//    {
+//      $ret = $facebook->api(array(
+//          'method' => 'facebook.connect.registerUsers', 
+//          'accounts' => json_encode($accounts)));
+//      
+//      
+//      // On success, return the set of email hashes registered
+//      // An email hash will be registered even if the email does not match a Facebook account
+//      $result = count($ret);
+//      foreach($ret as $email_hash)
+//      {
+//        sfFacebook::getGuardAdapter()->setUserEmailHash($hashed_users[$email_hash],$email_hash);
+//        if (method_exists($sfGuardUser, "getProfile")) {
+//$hashed_users[$email_hash]->getProfile()->save();
+//      } else {$hashed_users[$email_hash]->save();
+//      }
+//        
+//      }
+//    }
+//    catch (Exception $e)
+//    {
+//      error_log("Exception thrown while calling facebook.connect.registerUsers: ".$e);
+//    }
+//    $facebook->setSession($session_key);
+//
+//    return $result;
   }
 
 
