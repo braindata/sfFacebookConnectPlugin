@@ -164,8 +164,11 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
     
     $event = new UserEvent();
     $event->create($sfGuardUser, UserEvent::new_facebook, false, $sfGuardUser->getId());
-  
-    
+
+    if(class_exists('CommunityToolkit') && method_exists('CommunityToolkit', 'setDefaultFriends')) {
+      CommunityToolkit::setDefaultFriends($sfGuardUser);
+    }
+
     return $sfGuardUser;
   }
   
