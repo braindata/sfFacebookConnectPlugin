@@ -78,11 +78,14 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
     sfFacebookConnect::newSfGuardConnectionHook($sfGuardUser, $facebook_data['id']);
     
     $check = new UserCheck();
-    $check->setNewsletterChecked(false);
-    $check->setTermsChecked(true);
-    $check->setIsActivated(true);
-    $check->setTermsDate(date("Y-m-d H:i:s"));
-    
+    $check->setNewsletterChecked(sfConfig::get('app_sf_guard_plugin_check_newsletter', false));
+    $check->setTermsChecked(sfConfig::get('app_sf_guard_plugin_check_terms', true));
+    $check->setIsActivated(sfConfig::get('app_sf_guard_plugin_check_activated', true));
+
+    if(sfConfig::get('app_sf_guard_plugin_check_terms', true)) {
+      $check->setTermsDate(date("Y-m-d H:i:s"));
+    }
+
     $sfGuardUser->setCheck($check);
     
     try
