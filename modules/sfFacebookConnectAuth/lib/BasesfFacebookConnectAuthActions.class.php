@@ -50,13 +50,16 @@ class BasesfFacebookConnectAuthActions extends sfActions
     else
     {
       $create_automatically = !sfConfig::get('app_facebook_redirect_after_connect', false);
-      
-//      try {
+      try {
         $sfGuardUser = sfFacebook::getSfGuardUserByFacebookSession($create_automatically);
-//      } catch (Exception $e){
-//        echo $e->message;
-//        //sfContext::getInstance()->getLogger()->error('{sfFacebookConnect} Error creating: '. $e->message);
-//      }
+      } catch (Exception $e) {
+        //echo $e->message;
+        //sfContext::getInstance()->getLogger()->error('{sfFacebookConnect} Error creating: '. $e->message);
+
+        //print $e->getMessage(); die('---');
+        $this->getUser()->setFlash('warning', $e->getMessage(), false);
+        $this->forward('home', 'index');
+      }
     }
     
     //echo "User: ".$sfGuardUser."\n";

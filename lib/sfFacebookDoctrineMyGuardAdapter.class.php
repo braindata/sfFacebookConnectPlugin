@@ -72,6 +72,10 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
    */
   public function createSfGuardUserWithFacebookUidAndCon($facebook_data, $con)
   {
+    if(!isset($facebook_data['email'])) {
+      throw new sfException('Please give us the permission to get your emailadress');
+    }
+
     $sfGuardUser = new sfGuardUser();
     $FileManager = new sfFileManager();
     $this->setUserFacebookUid($sfGuardUser, $facebook_data['id']);
@@ -87,7 +91,7 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
     }
 
     $sfGuardUser->setCheck($check);
-    
+
     try
     {
       $ret = $facebook_data;
