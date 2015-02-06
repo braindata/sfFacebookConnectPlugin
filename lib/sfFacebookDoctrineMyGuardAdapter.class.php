@@ -95,7 +95,6 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
     try
     {
       $ret = $facebook_data;
-      //var_dump($ret);
       
       $sfGuardUser->setUsername($ret['name']);
       
@@ -155,8 +154,6 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
       $sfGuardUser->getCheck()->save();
       
       $sfGuardUser->addProfileImage();
-
-
 
       $con->commit();
     }
