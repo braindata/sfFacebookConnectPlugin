@@ -114,13 +114,13 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
          $content = file_get_contents($url);
       else
          $content = file_get_contents('https://graph.facebook.com/'.$facebook_data['id'].'/picture?type=large');
-      
+
       if ($content)
       {
         $filename = $FileManager->save($content, $sfGuardUser->getUsername(), "image/jpeg");
         $sfGuardUser->setImage1($filename);
       }
-      
+
       if ($ret['location'])
       {
         $city = substr($ret['location']['name'], 0, strpos($ret['location']['name'],","));
@@ -155,9 +155,9 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
       $sfGuardUser->getCheck()->save();
       
       $sfGuardUser->addProfileImage();
-      
-      
-      
+
+
+
       $con->commit();
     }
     catch (Exception $e)
@@ -168,21 +168,26 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
     
     $sfGuardUser->addGroupByName("User");
     $sfGuardUser->save();
+
+    // Set default friends
+    if(class_exists('CommunityToolkit') && method_exists('CommunityToolkit', 'setDefaultFriends')) {
+      CommunityToolkit::setDefaultFriends($sfGuardUser);
+    }
     
     $event = new UserEvent();
     $event->create($sfGuardUser, UserEvent::new_facebook, false, $sfGuardUser->getId());
 
-    if(class_exists('CommunityToolkit') && method_exists('CommunityToolkit', 'setDefaultFriends')) {
-      CommunityToolkit::setDefaultFriends($sfGuardUser);
-    }
+    try {
+      sfContext::getInstance()->getMailer()->send(new sfBaseMessage("message_register", $sfGuardUser));
+    } catch (Exception $e){}
 
     return $sfGuardUser;
   }
   
   /**
-   * gets a sfGuardUser using the facebook_uid column of his Profile class
+   * gets a sfGuardUser using the email column
    *
-   * @param Integer $facebook_uid
+   * @param string $facebook_email
    * @param boolean $isActive
    * @return sfGuardUser
    * @author fabriceb
