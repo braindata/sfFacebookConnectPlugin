@@ -66,7 +66,7 @@ class BasesfFacebookConnectAuthActions extends sfActions
 
     if ($sfGuardUser)
     {
-      $this->getContext()->getUser()->signIn($sfGuardUser);
+      $this->getContext()->getUser()->signIn($sfGuardUser, sfConfig::get('app_facebook_connect_rememberMe', false));
 
       $referer = $user->getAttribute('referer', $this->getRequest()->getReferer());
       $user->getAttributeHolder()->remove('referer');

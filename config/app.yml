@@ -23,4 +23,5 @@ all:
   facebook_connect:
     load_routing:     true
     user_permissions: []
+    rememberMe: false
 
