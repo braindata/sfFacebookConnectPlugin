@@ -107,7 +107,10 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
       $sfGuardUser->setLastName($ret['last_name']);
           
       $sfGuardUser->setEmailAddress($ret['email']);
-      $sfGuardUser->setDateOfBirth(date("Y-m-d", strToTime($ret['birthday'])));
+
+      if (array_key_exists('birthday', $ret)){
+        $sfGuardUser->setDateOfBirth(date("Y-m-d", strToTime($ret['birthday'])));
+      }
       
       if ($url = $this->getFacebookPictureUrl())
          $content = file_get_contents($url);
