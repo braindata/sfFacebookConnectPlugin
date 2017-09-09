@@ -66,7 +66,7 @@ function include_facebook_connect_script()
 {
   ?>
   <div id="fb-root"></div>
-  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js" type="text/javascript"></script>
+  <script src="//connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js" type="text/javascript"></script>
   <script src="<?php echo javascript_path('/sfFacebookConnectPlugin/js/sfFacebookConnect') ?>" type="text/javascript"></script>
 
   <script type="text/javascript">
@@ -93,7 +93,7 @@ function include_facebook_connect_script_src()
   }
   ?>
   <div id="fb-root"></div>
-  <script src="http://connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js" type="text/javascript"></script>
+  <script src="//connect.facebook.net/<?php echo sfFacebook::getLocale() ?>/all.js" type="text/javascript"></script>
   <script src="<?php echo javascript_path('/sfFacebookConnectPlugin/js/sfFacebookConnect') ?>" type="text/javascript"></script>
   <?php
   sfFacebook::setJsLoaded();
