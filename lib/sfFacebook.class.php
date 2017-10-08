@@ -175,7 +175,7 @@ class sfFacebook
   public static function getOrCreateUserByFacebookUid($facebook_uid, $isActive = true)
   {
     $fields = self::getApiFields();
-    $facebook_data = sfFacebook::getFacebookApi("/me?fields=" . implode(',', array_unique($fields)));
+    $facebook_data = sfFacebook::getFacebookApi("me?fields=" . implode(',', $fields));
 
     if (is_array($facebook_data) && isset($facebook_data['id']))
     {
@@ -488,7 +488,7 @@ class sfFacebook
   /**
    * @return array
    */
-  protected static function getApiFields()
+  public static function getApiFields()
   {
     $additionalFields = sfConfig::get('app_facebook_user_fields', []);
     $requiredFields = ['email', 'first_name', 'last_name', 'gender'];
@@ -499,6 +499,6 @@ class sfFacebook
       return !empty($val);
     });
 
-    return $fields;
+    return array_unique($fields);
   }
 }
