@@ -22,7 +22,8 @@ var_dump("APP_ID:".$ret);
 $ret = sfFacebook::getFacebookCookie();
 var_dump($ret);
 
-$ret = sfFacebook::getFacebookApi("me");
+$fields = sfFacebook::getApiFields();
+$ret = sfFacebook::getFacebookApi("me?fields=" . implode(',', $fields));
 var_dump($ret);
 
 $ret = sfFacebook::getFacebookApi("me/picture");

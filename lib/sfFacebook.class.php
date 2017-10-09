@@ -20,9 +20,9 @@ class sfFacebook
     $app_id = self::getApiId();
     $application_secret = self::getApiSecret();
     $args = array();
-    
+
     //var_dump('COOKIE: fbs_' . $app_id);
-    
+
     if (!isset($_COOKIE['fbs_' . $app_id]))
     {
       return null;
@@ -75,7 +75,7 @@ class sfFacebook
   }
 
   /**
-   * get the facebook UID 
+   * get the facebook UID
    *
    * @return Integer
    * @author Benjamin Grandfond <benjaming@theodo.fr>
@@ -174,11 +174,9 @@ class sfFacebook
    */
   public static function getOrCreateUserByFacebookUid($facebook_uid, $isActive = true)
   {
-    $facebook_data = sfFacebook::getFacebookApi("me");
-    
-    //var_dump($facebook_data);
-    //var_dump(sprintf("UID: %s | active: %s", $facebook_uid, $isActive));
-    
+    $fields = self::getApiFields();
+    $facebook_data = sfFacebook::getFacebookApi("me?fields=" . implode(',', $fields));
+
     if (is_array($facebook_data) && isset($facebook_data['id']))
     {
     
@@ -236,7 +234,7 @@ class sfFacebook
   {
     // We get the facebook uid
     $fb_uid = self::getUser();
-    
+
     if ($fb_uid)
     {
       if ($create){
@@ -487,4 +485,20 @@ class sfFacebook
     return join('&', $parameter_array);
   }
 
+  /**
+   * @return array
+   */
+  public static function getApiFields()
+  {
+    $additionalFields = sfConfig::get('app_facebook_user_fields', []);
+    $requiredFields = ['email', 'first_name', 'last_name', 'gender'];
+    $fields = array_merge($requiredFields, $additionalFields);
+
+    // Filter empty fields
+    $fields = array_filter($fields, function ($val) {
+      return !empty($val);
+    });
+
+    return array_unique($fields);
+  }
 }

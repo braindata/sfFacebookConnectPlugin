@@ -216,7 +216,8 @@ abstract class sfFacebookGuardAdapter
     
     try
     {
-      $ret = sfFacebook::getFacebookApi("me");
+      $fields = sfFacebook::getApiFields();
+      $ret = sfFacebook::getFacebookApi("me?fields=" . implode(',', $fields));
       //var_dump($ret);
       
       $sfGuardUser->setUsername($ret['name']);
