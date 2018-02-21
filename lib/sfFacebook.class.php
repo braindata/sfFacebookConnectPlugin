@@ -491,7 +491,7 @@ class sfFacebook
   public static function getApiFields()
   {
     $additionalFields = sfConfig::get('app_facebook_user_fields', []);
-    $requiredFields = ['email', 'first_name', 'last_name', 'gender'];
+    $requiredFields = ['email', 'first_name', 'last_name', 'name', 'gender'];
     $fields = array_merge($requiredFields, $additionalFields);
 
     // Filter empty fields
