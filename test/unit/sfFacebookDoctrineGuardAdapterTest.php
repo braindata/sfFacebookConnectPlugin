@@ -20,7 +20,7 @@ $sfGuardUser->setUsername('test');
 sfFacebook::getGuardAdapter()->setUserFacebookUid($sfGuardUser,9999999999);
 try
 {
-  $con = Doctrine::getConnectionByTableName('sfGuardUser');
+  $con = Doctrine_Core::getConnectionByTableName('sfGuardUser');
   $con->beginTransaction();
   $sfGuardUser->save();
   $sfGuardUser->getProfile()->save();
@@ -42,7 +42,7 @@ $sfGuardUser->setUsername('test');
 sfFacebook::getGuardAdapter()->setUserProfileProperty($sfGuardUser,'email_hash',sfFacebookConnect::getEmailHash('fabriceb@theodo.fr'));
 try
 {
-  $con = Doctrine::getConnectionByTableName('sfGuardUser');
+  $con = Doctrine_Core::getConnectionByTableName('sfGuardUser');
   $con->beginTransaction();
 
   $sfGuardUser->save();

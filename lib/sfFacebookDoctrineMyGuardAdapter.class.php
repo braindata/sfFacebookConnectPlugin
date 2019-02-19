@@ -56,7 +56,7 @@ class sfFacebookDoctrineGuardMyAdapter extends sfFacebookDoctrineGuardAdapter
    */
   public function createSfGuardUserWithFacebookUid($facebook_data)
   {
-    $con = Doctrine::getConnectionByTableName('sfGuardUser');
+    $con = Doctrine_Core::getConnectionByTableName('sfGuardUser');
 
     return self::createSfGuardUserWithFacebookUidAndCon($facebook_data, $con);
   }
